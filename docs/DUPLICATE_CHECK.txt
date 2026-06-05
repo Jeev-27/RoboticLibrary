@@ -1,0 +1,12 @@
+Duplicate Check
+
+The package has been cleaned to avoid accidental duplicate uploads.
+
+Intentional similar files:
+1. qrcodes/Bookshelf 2 - Right.png
+   - This is part of the full QR code set.
+
+2. task_models/qr_bookshelf_right/materials/textures/bookshelf_right.png
+   - This is the texture file required by the Gazebo QR board model.
+
+These are not accidental duplicates because Gazebo needs a simple texture filename inside the model folder.

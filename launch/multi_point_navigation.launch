@@ -1,0 +1,29 @@
+<launch>
+  <arg name="map_file" default="$(find tiago_library_nav)/maps/library_final_fixed_map.yaml"/>
+
+  <!-- Relay TIAGo laser from /scan_raw to /scan because move_base expects /scan -->
+  <node pkg="topic_tools" type="relay" name="scan_raw_to_scan" args="/scan_raw /scan" output="screen"/>
+
+  <!-- Load saved map -->
+  <node pkg="map_server" type="map_server" name="map_server" args="$(arg map_file)" output="screen"/>
+
+  <!-- AMCL localization -->
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <remap from="scan" to="/scan"/>
+    <param name="odom_frame_id" value="odom"/>
+    <param name="base_frame_id" value="base_footprint"/>
+    <param name="global_frame_id" value="map"/>
+    <param name="odom_model_type" value="diff"/>
+  </node>
+
+  <!-- move_base using eband planner because DWA is not available in this Docker -->
+  <include file="$(find pal_navigation_cfg_tiago)/launch/move_base.launch">
+    <arg name="public_sim" value="true"/>
+    <arg name="local_planner" value="eband"/>
+  </include>
+
+  <!-- UI for selecting checkpoints -->
+  <node pkg="tiago_library_nav" type="multi_point_ui.py" name="multi_point_ui" output="screen"/>
+  <!-- Week 10 QR scanning task node -->
+  <node pkg="tiago_library_nav" type="qr_scanner.py" name="qr_scanner" output="screen"/>
+</launch>

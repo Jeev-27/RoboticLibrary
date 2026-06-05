@@ -1,0 +1,33 @@
+Group 3 TIAGo Library Navigation and QR Scanning Submission
+
+Included deliverables:
+
+1. Functional ROS package
+   - tiago_library_nav/package.xml
+   - tiago_library_nav/CMakeLists.txt
+   - tiago_library_nav/launch/multi_point_navigation.launch
+   - tiago_library_nav/launch/qr_task.launch
+   - tiago_library_nav/scripts/multi_point_ui.py
+   - tiago_library_nav/scripts/qr_scanner.py
+   - tiago_library_nav/scripts/fix_pal_nav_config.sh
+   - tiago_library_nav/scripts/install_qr_dependencies.sh
+
+2. Map files from Week 9 navigation
+   - tiago_library_nav/maps/library_final_fixed_map.pgm
+   - tiago_library_nav/maps/library_final_fixed_map.yaml
+
+3. Gazebo worlds
+   - tiago_library_nav/worlds/project_library_final_fixed.world
+   - tiago_library_nav/worlds/project_library_week10_qr.world
+
+4. QR task assets for Week 10
+   - tiago_library_nav/qrcodes/
+   - tiago_library_nav/task_models/qr_bookshelf_right/
+
+5. Demo video
+   - demo_video/week10_qr_scanning_demo.mkv
+
+Notes:
+- Week 9 files are intentionally kept because Week 10 QR scanning depends on the existing navigation map, world, and UI.
+- The QR scanning task uses pyzbar, so run scripts/install_qr_dependencies.sh inside Docker if pyzbar/libzbar is not installed.
+- The ROS package folder name must remain tiago_library_nav.

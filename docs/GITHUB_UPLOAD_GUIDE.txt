@@ -1,0 +1,16 @@
+GitHub Upload Guide
+
+1. Extract the ZIP.
+2. Open terminal in the folder containing tiago_library_nav.
+3. Run:
+   git init
+   git add .
+   git commit -m "Add TIAGo library navigation and QR scanning project"
+4. Create a new GitHub repository.
+5. Follow GitHub instructions to push the repository.
+
+Suggested repository name:
+tiago-library-navigation-qr
+
+Note:
+Large demo videos may be uploaded to Google Drive instead of GitHub.

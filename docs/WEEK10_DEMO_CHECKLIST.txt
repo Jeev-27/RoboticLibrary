@@ -1,0 +1,11 @@
+Week 10 Demo Video Checklist
+
+Show these in the video:
+1. Gazebo world with Bookshelf 2 Right QR board.
+2. TIAGo robot in the world.
+3. RViz map and RobotModel.
+4. UI menu.
+5. User selects 6 - Bookshelf 2 Right.
+6. rqt_image_view showing QR in TIAGo camera.
+7. Terminal displaying /qr_scan_result output.
+8. Explain that QR scanning is the Week 10 task action.

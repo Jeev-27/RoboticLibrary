@@ -1,0 +1,20 @@
+Week 9 and Week 10 Note
+
+Some files are from Week 9 and are intentionally kept because Week 10 builds on top of Week 9.
+
+Week 9 files kept:
+- maps/library_final_fixed_map.pgm
+- maps/library_final_fixed_map.yaml
+- scripts/multi_point_ui.py
+- launch/multi_point_navigation.launch
+- worlds/project_library_final_fixed.world
+
+Week 10 additions:
+- scripts/qr_scanner.py
+- launch/qr_task.launch
+- qrcodes/
+- task_models/qr_bookshelf_right/
+- worlds/project_library_week10_qr.world
+- scripts/install_qr_dependencies.sh
+
+Do not remove Week 9 files because the QR task still needs the map, navigation launch, UI and original world foundation.
