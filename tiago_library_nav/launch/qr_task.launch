@@ -1,3 +1,0 @@
-<launch>
-  <node pkg="tiago_library_nav" type="qr_scanner.py" name="qr_scanner" output="screen"/>
-</launch>
