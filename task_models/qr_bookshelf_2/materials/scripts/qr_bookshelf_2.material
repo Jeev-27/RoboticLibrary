@@ -1,0 +1,13 @@
+material QR/Bookshelf2
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture bookshelf_2.png
+      }
+    }
+  }
+}

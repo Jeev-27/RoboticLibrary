@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIAGo Library Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1b1f23;
+    --ink-panel:#22272e;
+    --paper:#f4ecd8;
+    --paper-line:#d8c9a3;
+    --brass:#a9824c;
+    --brass-dark:#7d5f37;
+    --ok:#5fae7a;
+    --err:#c1574a;
+    --warn:#cf9b3f;
+    --mono-dim:#8a93a1;
+    --text-light:#e7e9ec;
+    --radius:6px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--text-light);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:32px clamp(16px,4vw,48px);
+  }
+  a{color:var(--brass);}
+
+  header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .title-block h1{
+    font-family:'Lora',serif;
+    font-weight:600;
+    font-size:1.6rem;
+    margin:0 0 4px 0;
+    letter-spacing:0.01em;
+  }
+  .title-block p{
+    margin:0;
+    color:var(--mono-dim);
+    font-size:0.85rem;
+  }
+
+  .conn-panel{
+    background:var(--ink-panel);
+    border:1px solid #333a42;
+    border-radius:var(--radius);
+    padding:10px 14px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+  }
+  .conn-dot{
+    width:9px;height:9px;border-radius:50%;
+    background:var(--err);
+    flex-shrink:0;
+    transition:background 0.2s;
+  }
+  .conn-dot.connected{background:var(--ok);}
+  .conn-dot.connecting{background:var(--warn);}
+  .conn-panel input{
+    background:#161a1e;
+    border:1px solid #3a4148;
+    color:var(--text-light);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    padding:5px 8px;
+    border-radius:4px;
+    width:180px;
+  }
+  .conn-panel input:focus-visible{outline:2px solid var(--brass);outline-offset:1px;}
+  .conn-panel button{
+    background:#2c333a;
+    border:1px solid #3a4148;
+    color:var(--text-light);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.75rem;
+    padding:5px 10px;
+    border-radius:4px;
+    cursor:pointer;
+  }
+  .conn-panel button:hover{background:#3a424a;}
+
+  main{
+    display:grid;
+    grid-template-columns:340px 1fr;
+    gap:24px;
+    align-items:start;
+  }
+  @media (max-width:820px){
+    main{grid-template-columns:1fr;}
+  }
+
+  /* ---- catalog card (request panel) ---- */
+  .card{
+    background:var(--paper);
+    color:#2a2118;
+    border-radius:2px;
+    padding:28px 26px 24px;
+    position:relative;
+    box-shadow:0 8px 22px rgba(0,0,0,0.35);
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0, transparent 31px, var(--paper-line) 32px);
+    background-position:0 92px;
+  }
+  .card::before, .card::after,
+  .card .pin-tl, .card .pin-br{
+    content:"";
+    position:absolute;
+    width:9px;height:9px;
+    border-radius:50%;
+    background:var(--brass);
+    box-shadow:0 1px 2px rgba(0,0,0,0.4);
+  }
+  .card::before{top:10px;left:10px;}
+  .card::after{top:10px;right:10px;}
+  .card .pin-tl{bottom:10px;left:10px;}
+  .card .pin-br{bottom:10px;right:10px;}
+
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.68rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--brass-dark);
+    margin-bottom:6px;
+  }
+  .card h2{
+    font-family:'Lora',serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:1.3rem;
+    margin:0 0 18px 0;
+    border-bottom:1px solid var(--paper-line);
+    padding-bottom:14px;
+  }
+  label.field-label{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--brass-dark);
+    margin-bottom:6px;
+  }
+  #bookId{
+    width:100%;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:1.05rem;
+    padding:10px 4px;
+    background:transparent;
+    border:none;
+    border-bottom:2px solid var(--brass);
+    color:#2a2118;
+    margin-bottom:18px;
+  }
+  #bookId:focus-visible{outline:none;border-bottom-color:#5a3f1d;}
+  #bookId::placeholder{color:#a99a7a;}
+
+  .dispatch-btn{
+    width:100%;
+    background:var(--brass-dark);
+    color:#fbf3e1;
+    border:none;
+    border-radius:3px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.85rem;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    padding:11px 0;
+    cursor:pointer;
+    transition:background 0.15s;
+  }
+  .dispatch-btn:hover{background:#5a3f1d;}
+  .dispatch-btn:disabled{background:#9a8b6e;cursor:not-allowed;}
+  .dispatch-btn:focus-visible{outline:2px solid #2a2118;outline-offset:2px;}
+
+  .card .hint{
+    margin-top:12px;
+    font-size:0.72rem;
+    color:#6b5d44;
+    font-family:'IBM Plex Mono',monospace;
+  }
+
+  /* ---- console panels ---- */
+  .console{
+    background:var(--ink-panel);
+    border:1px solid #333a42;
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .console + .console{margin-top:18px;}
+  .console-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px 16px;
+    border-bottom:1px solid #333a42;
+    background:#262c33;
+  }
+  .console-head h3{
+    margin:0;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color:var(--mono-dim);
+  }
+  .console-head .topic-name{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.7rem;
+    color:#5a6573;
+  }
+  .console-body{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.8rem;
+    line-height:1.55;
+    padding:14px 16px;
+    height:220px;
+    overflow-y:auto;
+  }
+  .console-body .empty{color:#555d66;font-style:italic;}
+  .log-line{margin-bottom:5px;white-space:pre-wrap;word-break:break-word;}
+  .log-line .ts{color:#5a6573;margin-right:8px;}
+  .log-line.ok{color:var(--ok);}
+  .log-line.err{color:var(--err);}
+  .log-line.warn{color:var(--warn);}
+  .log-line.dispatch{color:#cdb98a;}
+  .log-line.neutral{color:var(--text-light);}
+
+  footer{
+    margin-top:26px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.68rem;
+    color:#555d66;
+    line-height:1.6;
+  }
+  footer code{color:var(--mono-dim);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <h1>TIAGo Library Console</h1>
+    <p>Enter a Book ID. TIAGo will search Bookshelf 1 to 8, scan QR book lists, then return home.</p>
+  </div>
+  <div class="conn-panel">
+    <span class="conn-dot" id="connDot"></span>
+    <span id="connLabel">disconnected</span>
+    <input id="rosbridgeUrl" type="text" value="ws://localhost:9090" aria-label="rosbridge websocket URL">
+    <button id="connectBtn">Connect</button>
+  </div>
+</header>
+
+<main>
+  <section class="card">
+    <div class="pin-tl"></div><div class="pin-br"></div>
+    <div class="eyebrow">Catalog Request</div>
+    <h2>Find a book</h2>
+    <label class="field-label" for="bookId">Book ID</label>
+    <input id="bookId" type="text" placeholder="e.g. B010" autocomplete="off">
+    <button class="dispatch-btn" id="dispatchBtn">Dispatch to TIAGo</button>
+    <div class="hint">Sent on <code style="font-family:inherit">/book_finder/request</code></div>
+    <div class="hint">Try: B002, B010, B018, B030, or B999 for not found.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;">
+      <button class="dispatch-btn" style="font-size:0.7rem;padding:7px 0;" onclick="quickBook('B002')">B002</button>
+      <button class="dispatch-btn" style="font-size:0.7rem;padding:7px 0;" onclick="quickBook('B010')">B010</button>
+      <button class="dispatch-btn" style="font-size:0.7rem;padding:7px 0;" onclick="quickBook('B030')">B030</button>
+      <button class="dispatch-btn" style="font-size:0.7rem;padding:7px 0;" onclick="quickBook('B999')">B999</button>
+    </div>
+  </section>
+
+  <div>
+    <section class="console">
+      <div class="console-head">
+        <h3>Mission Log</h3>
+        <span class="topic-name">/book_finder/status</span>
+      </div>
+      <div class="console-body" id="statusLog">
+        <div class="empty">Waiting for connection&hellip;</div>
+      </div>
+    </section>
+
+    <section class="console">
+      <div class="console-head">
+        <h3>QR Debug Feed</h3>
+        <span class="topic-name">/book_finder/qr_debug</span>
+      </div>
+      <div class="console-body" id="qrLog">
+        <div class="empty">No QR detections received yet&hellip;</div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer>
+  Publishes <code>std_msgs/String</code> on <code>/book_finder/request</code> &middot;
+  subscribes <code>std_msgs/String</code> on <code>/book_finder/status</code> and <code>/book_finder/qr_debug</code> &middot;
+  requires <code>rosbridge_server</code>, <code>book_finder_node.py</code>, navigation stack, and TIAGo simulation running.
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/roslib@1/build/roslib.min.js"></script>
+<script>
+  const connDot   = document.getElementById('connDot');
+  const connLabel = document.getElementById('connLabel');
+  const urlInput  = document.getElementById('rosbridgeUrl');
+  const connectBtn= document.getElementById('connectBtn');
+  const bookIdInput = document.getElementById('bookId');
+  const dispatchBtn  = document.getElementById('dispatchBtn');
+  const statusLog = document.getElementById('statusLog');
+  const qrLog      = document.getElementById('qrLog');
+
+  let ros = null;
+  let requestTopic, statusTopic, qrTopic;
+
+  function timestamp(){
+    const d = new Date();
+    return d.toLocaleTimeString([], {hour12:false}) + '.' + String(d.getMilliseconds()).padStart(3,'0');
+  }
+
+  function appendLine(container, text, cls){
+    const emptyMsg = container.querySelector('.empty');
+    if (emptyMsg) emptyMsg.remove();
+    const line = document.createElement('div');
+    line.className = 'log-line ' + (cls || 'neutral');
+    const ts = document.createElement('span');
+    ts.className = 'ts';
+    ts.textContent = timestamp();
+    line.appendChild(ts);
+    line.appendChild(document.createTextNode(text));
+    container.appendChild(line);
+    while (container.children.length > 60) container.removeChild(container.firstChild);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function classifyStatus(text){
+    const t = text.toLowerCase();
+    if (t.includes('not_found') || t.includes('not found') || t.includes('error') || t.includes('fail')) return 'err';
+    if (t.includes('found') || t.includes('success') || t.includes('done')) return 'ok';
+    if (t.includes('navigat') || t.includes('search') || t.includes('scan')) return 'warn';
+    return 'neutral';
+  }
+
+  function setConnUI(state){
+    connDot.classList.remove('connected','connecting');
+    if (state === 'connected'){
+      connDot.classList.add('connected');
+      connLabel.textContent = 'connected';
+      connectBtn.textContent = 'Disconnect';
+      dispatchBtn.disabled = false;
+    } else if (state === 'connecting'){
+      connDot.classList.add('connecting');
+      connLabel.textContent = 'connecting…';
+      dispatchBtn.disabled = true;
+    } else {
+      connLabel.textContent = 'disconnected';
+      connectBtn.textContent = 'Connect';
+      dispatchBtn.disabled = true;
+    }
+  }
+
+  function connect(){
+    const url = urlInput.value.trim();
+    if (!url) return;
+    setConnUI('connecting');
+    ros = new ROSLIB.Ros({ url });
+
+    ros.on('connection', () => {
+      setConnUI('connected');
+      appendLine(statusLog, 'rosbridge connected at ' + url, 'ok');
+
+      requestTopic = new ROSLIB.Topic({
+        ros, name: '/book_finder/request', messageType: 'std_msgs/String'
+      });
+      statusTopic = new ROSLIB.Topic({
+        ros, name: '/book_finder/status', messageType: 'std_msgs/String'
+      });
+      qrTopic = new ROSLIB.Topic({
+        ros, name: '/book_finder/qr_debug', messageType: 'std_msgs/String'
+      });
+
+      statusTopic.subscribe((msg) => {
+        appendLine(statusLog, msg.data, classifyStatus(msg.data));
+      });
+      qrTopic.subscribe((msg) => {
+        appendLine(qrLog, msg.data, 'neutral');
+      });
+    });
+
+    ros.on('error', (err) => {
+      setConnUI('disconnected');
+      appendLine(statusLog, 'connection error: ' + err, 'err');
+    });
+
+    ros.on('close', () => {
+      setConnUI('disconnected');
+      appendLine(statusLog, 'rosbridge connection closed', 'err');
+    });
+  }
+
+  function disconnect(){
+    if (ros) ros.close();
+    ros = null;
+    setConnUI('disconnected');
+  }
+
+  connectBtn.addEventListener('click', () => {
+    if (ros && ros.isConnected) disconnect();
+    else connect();
+  });
+
+  function dispatch(){
+    const id = bookIdInput.value.trim().toUpperCase();
+    if (!id) { bookIdInput.focus(); return; }
+    if (!requestTopic) { appendLine(statusLog, 'not connected to rosbridge', 'err'); return; }
+    requestTopic.publish(new ROSLIB.Message({ data: id }));
+    appendLine(statusLog, 'dispatched request for "' + id + '"', 'dispatch');
+  }
+
+  function quickBook(id){
+    bookIdInput.value = id;
+    dispatch();
+  }
+
+  dispatchBtn.addEventListener('click', dispatch);
+  bookIdInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') dispatch(); });
+
+  setConnUI('disconnected');
+  // auto-connect on load using the default URL
+  connect();
+</script>
+
+</body>
+</html>

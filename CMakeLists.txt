@@ -6,6 +6,8 @@ find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   nav_msgs
   actionlib_msgs
+  move_base_msgs
+  actionlib
   sensor_msgs
   std_msgs
   cv_bridge
@@ -17,6 +19,7 @@ catkin_package()
 catkin_install_python(PROGRAMS
   scripts/multi_point_ui.py
   scripts/qr_scanner.py
+  scripts/book_finder_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

@@ -1,24 +1,34 @@
-TIAGo Library Navigation and QR Scanning Project
+TIAGo Library Navigation Package
 
-This package contains the ROS files for Group 3 TTTC2343 TIAGo library simulation.
+This package contains the map files, edited Gazebo world, launch file, and Python UI for multi-point navigation.
 
-Week 9 content:
-- Gazebo library world
-- Map files
-- Multi-point navigation
-- UI for destination selection and robot status
+Deliverables:
+1. maps/library_final_fixed_map.pgm
+2. maps/library_final_fixed_map.yaml
+3. worlds/project_library_final_fixed.world
+4. scripts/multi_point_ui.py
+5. launch/multi_point_navigation.launch
 
-Week 10 content:
-- QR code scanning task
-- Bookshelf 2 Right QR station
-- QR scanner node using pyzbar
-- QR result published to /qr_scan_result
+How to run:
 
-Main launch:
+1. Start TIAGo simulation:
+roslaunch tiago_gazebo tiago_gazebo.launch public_sim:=true robot:=steel world:=project_library_final_fixed
+
+2. Fix PAL navigation config:
+rosrun tiago_library_nav fix_pal_nav_config.sh
+
+3. Run navigation package:
 roslaunch tiago_library_nav multi_point_navigation.launch
 
-QR-only launch:
-roslaunch tiago_library_nav qr_task.launch
+4. Open RViz:
+rviz
 
-Install QR dependencies in Docker:
-bash scripts/install_qr_dependencies.sh
+5. Set Fixed Frame to map.
+6. Use 2D Pose Estimate to set robot starting position.
+7. Use the UI to select checkpoint 1, 2, 3, or automatic route.
+
+Notes:
+- /scan_raw is relayed to /scan.
+- AMCL is used for localization.
+- move_base is launched with eband local planner.
+- DWA planner was not used because it was not available in the Docker environment.
