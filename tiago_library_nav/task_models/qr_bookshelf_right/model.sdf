@@ -1,0 +1,33 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="qr_bookshelf_right">
+    <static>true</static>
+
+    <link name="qr_board_link">
+      <pose>0 0 0 0 0 0</pose>
+
+      <collision name="qr_board_collision">
+        <geometry>
+          <box>
+            <size>0.8 0.03 0.8</size>
+          </box>
+        </geometry>
+      </collision>
+
+      <visual name="qr_board_visual">
+        <geometry>
+          <box>
+            <size>0.8 0.03 0.8</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://qr_bookshelf_right/materials/scripts</uri>
+            <uri>model://qr_bookshelf_right/materials/textures</uri>
+            <name>QR/BookshelfRight</name>
+          </script>
+        </material>
+      </visual>
+    </link>
+  </model>
+</sdf>
